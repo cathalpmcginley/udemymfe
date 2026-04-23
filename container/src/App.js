@@ -1,22 +1,16 @@
 import React, { useEffect, useRef } from "react"
+import { BrowserRouter } from 'react-router-dom'
 
-import { mount } from 'marketing/Marketing'
-
-console.log("imported", mount)
+import Header from './components/Header'
+import MarketingApp from "./remotes/marketing/MarketingApp"
 
 export default () => {
-
-    const marketingMountPoint = useRef(null)
-
-    useEffect(() => {
-        if (marketingMountPoint.current) {
-            mount(marketingMountPoint.current)
-        }
-    }, [marketingMountPoint])
-
     return (
-        <>
-            <div ref={marketingMountPoint}></div>
-        </>
+        <BrowserRouter>
+            <div>
+                <Header />
+                <MarketingApp />
+            </div>
+        </BrowserRouter>
     )
 }
