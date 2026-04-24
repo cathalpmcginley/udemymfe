@@ -17,6 +17,8 @@ const prodConfig = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './public/index.html',
+            title: 'MFE Container',
+            favicon: "./public/assets/generic-fav-icon-32x32.png"
         }),
         new ModuleFederationPlugin({
             name: 'container',

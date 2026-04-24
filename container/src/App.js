@@ -22,9 +22,6 @@ export default () => {
             <BrowserRouter>
                 <div>
                     <Header signedIn={isSignedIn} onSignOut={() => setIsSignedIn(false)} />
-                    <div>
-                        isSignedIn = {isSignedIn ? 'yes' : 'no'}
-                    </div>
                     <Suspense  fallback={<Progress />}>
                         <Switch>
                             <Route path="/auth">
