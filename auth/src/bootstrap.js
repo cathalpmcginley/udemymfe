@@ -5,9 +5,8 @@ import { createBrowserHistory, createMemoryHistory } from 'history'
 import App from './App'
 
 
-const mount = (el, { defaultHistory, onNavigate, initialPath }) => {
+const mount = (el, { defaultHistory, onNavigate, initialPath, onAuthChange }) => {
     if (el) {
-        console.log("Marketing MFE : initialPath=${initialPath}")
         const history = defaultHistory || createMemoryHistory({
             initialEntries: [initialPath]
         })
@@ -16,13 +15,13 @@ const mount = (el, { defaultHistory, onNavigate, initialPath }) => {
         }
 
         ReactDOM.render(
-            <App history={history} />,
+            <App onAuthChange={onAuthChange} history={history} />,
             el
         )
 
         return {
             onParentNavigate({ pathname: newPathname }) {
-                console.log("I am the marketing app :: parent is navigating", location)
+                console.log("I am the auth app :: parent is navigating", location)
                 const { pathname } = history.location
                 if (pathname !== newPathname) {
                     history.push(newPathname)
@@ -32,7 +31,7 @@ const mount = (el, { defaultHistory, onNavigate, initialPath }) => {
     }
 }
 if (process.env.NODE_ENV === 'development') {
-    const el = document.querySelector('#local-sandbox-marketing')
+    const el = document.querySelector('#local-sandbox-auth')
     if (el) {
         mount(el, { defaultHistory: createBrowserHistory() })
     }

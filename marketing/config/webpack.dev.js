@@ -9,12 +9,17 @@ const devConfig = {
   devServer: {
     port: 5110,
     historyApiFallback: {
-      index: 'index.html',
+      index: '/index.html',
     },
+  },
+   output: {
+    publicPath: 'http://localhost:5110/'
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+      title: 'Marketing MFE [🏠]',
+      favicon: "./public/assets/sita-fav-icon-32x32.png"
     }),
     new ModuleFederationPlugin({
       name: 'marketing',
