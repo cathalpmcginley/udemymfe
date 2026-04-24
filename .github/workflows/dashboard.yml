@@ -1,0 +1,55 @@
+name: Deploy dashboard MFE
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+    - 'dashboard/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'dashboard/**'
+defaults:
+  run:
+    working-directory: dashboard
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24.x
+
+    - name: Build
+      env:
+        PRODUCTION_DOMAIN: ${{ secrets.PRODUCTION_DOMAIN }}
+      run: |
+        npm install
+        npm run build
+    
+
+    - uses: shallwefootball/s3-upload-action@master
+      name: Upload S3
+      id: S3
+      with:
+        aws_bucket: ${{ secrets.AWS_S3_BUCKET_NAME }}
+        aws_key_id: ${{ secrets.AWS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}        
+        # aws_default_region: eu-north-1
+        source_dir: 'dashboard/dist'
+        destination_dir: 'r/dashboard/latest'
+
+
+    - name: Create CloudFront invalidation
+      uses: chetan/invalidate-cloudfront-action@v2
+      env:
+        DISTRIBUTION: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}
+        PATHS: "/r/dashboard/latest/remoteEntry.js"
+        AWS_REGION: "eu-north-1"
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

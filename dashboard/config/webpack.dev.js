@@ -1,40 +1,38 @@
 const { merge } = require('webpack-merge');
-
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
 const commonConfig = require('./webpack.common');
 const packageJson = require('../package.json')
 
 const devConfig = {
   mode: 'development',
   devServer: {
-    port: 5100,
+    port: 5130,
     historyApiFallback: {
       index: '/index.html',
     },
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   },
-   output: {
-    publicPath: 'http://localhost:5100/'
+  output: {
+    publicPath: 'http://localhost:5130/'
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      title: 'MFE Container [🏠]',
+      title: 'Dashboard MFE [🏠]',
       favicon: "./public/assets/sita-fav-icon-32x32.png"
     }),
     new ModuleFederationPlugin({
-      name: 'container',
+      name: 'dashboard',
       filename: 'remoteEntry.js',
-      remotes: {
-        marketing: 'marketing@http://localhost:5110/remoteEntry.js',
-        auth: 'auth@http://localhost:5120/remoteEntry.js',
-        dashboard: 'dashboard@http://localhost:5130/remoteEntry.js'
+      exposes: {
+        './Dashboard': './src/bootstrap'
       },
-      shared: packageJson.dependencies
+      shared: packageJson.dependencies,
     })
   ],
-
 };
 
 module.exports = merge(commonConfig, devConfig);
